@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.alefbt.bigdata</groupId>
+	<artifactId>flume-hbase-async-serializer</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>BigData-flume-hbase-serializer</name>
+	<properties>
+		<flume.version>1.7.0</flume.version>
+		<hbase-client.version>1.1.12</hbase-client.version>
+	</properties>
+	<build>
+		<plugins>
+			<!-- any other plugins -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.flume.flume-ng-sinks</groupId>
+			<artifactId>flume-ng-hbase-sink</artifactId>
+			<version>${flume.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase-client</artifactId>
+			<version>${hbase-client.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<organization>
+		<name>Alefbt</name>
+		<url>http://www.alefbt.com/</url>
+	</organization>
+	
+	<url>https://github.com/alefbt/BigData-flume-hbase-serializer</url>
+</project>

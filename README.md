@@ -57,6 +57,13 @@ so,
 ## Developers
 Me: Yehuda Korotkin <yehuda@alefbt.com> 
 
+## See also
+
+https://flume.apache.org/FlumeUserGuide.html#asynchbasesink
+https://flume.apache.org/
+http://hbase.apache.org/
+
+
 ## License 
 MIT. (see LICENSE file)
  

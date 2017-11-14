@@ -59,9 +59,10 @@ Me: Yehuda Korotkin <yehuda@alefbt.com>
 
 ## See also
 
-https://flume.apache.org/FlumeUserGuide.html#asynchbasesink
-https://flume.apache.org/
-http://hbase.apache.org/
+ * https://flume.apache.org/FlumeUserGuide.html#asynchbasesink
+ * https://commons.apache.org/proper/commons-csv/
+ * https://flume.apache.org/
+ * http://hbase.apache.org/
 
 
 ## License 

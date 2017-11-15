@@ -6,44 +6,91 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>BigData-flume-hbase-serializer</name>
 	<properties>
-		<flume.version>1.7.0</flume.version>
-		<hbase-client.version>1.1.12</hbase-client.version>
+		<flume.version>1.6.0-cdh5.8.2</flume.version>
+		<hbase-client.version>1.2.0-cdh5.8.2</hbase-client.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
 	<build>
 		<plugins>
-			<!-- any other plugins -->
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>shade</goal>
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
-			<groupId>org.apache.flume.flume-ng-sinks</groupId>
-			<artifactId>flume-ng-hbase-sink</artifactId>
-			<version>${flume.version}</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4.1</version>
 			<scope>provided</scope>
 		</dependency>
+
+
+		<dependency>
+			<artifactId>flume-ng-core</artifactId>
+			<groupId>org.apache.flume</groupId>
+			<version>1.6.0-cdh5.8.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<artifactId>flume-ng-hbase-sink</artifactId>
+			<groupId>org.apache.flume.flume-ng-sinks</groupId>
+			<version>1.6.0-cdh5.8.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase -->
+		<dependency>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase</artifactId>
+			<version>1.2.0-cdh5.8.2</version>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-client -->
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase-client</artifactId>
-			<version>${hbase-client.version}</version>
+			<version>1.2.0-cdh5.8.2</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>2.0.0-cdh4.2.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>
@@ -60,6 +107,28 @@
 		<name>Alefbt</name>
 		<url>http://www.alefbt.com/</url>
 	</organization>
-	
+
+
+	<repositories>
+		<repository>
+			<id>cdh.repo</id>
+			<url>https://repository.cloudera.com/artifactory/cloudera-repos</url>
+			<name>Cloudera Repositories</name>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>central.maven</id>
+			<url>http://central.maven.org/maven2/</url>
+			<name>Central Maven2 Repositories</name>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+	</repositories>
+
+
 	<url>https://github.com/alefbt/BigData-flume-hbase-serializer</url>
 </project>

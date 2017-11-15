@@ -16,6 +16,8 @@ import org.apache.flume.conf.ComponentConfiguration;
 import org.apache.flume.sink.hbase.AsyncHbaseEventSerializer;
 import org.hbase.async.AtomicIncrementRequest;
 import org.hbase.async.PutRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -23,53 +25,90 @@ import org.hbase.async.PutRequest;
  *
  */
 public class AsyncHbaseCSVEventSerializer implements AsyncHbaseEventSerializer {
+	private static final Logger LOG = LoggerFactory.getLogger(AsyncHbaseCSVEventSerializer.class);
 	private byte[] table;
 	private byte[] columnFamily;
 
 	private Event currentEvent;
 
 	// private byte[][] columnNames;
-
+	private final byte[] eventCountCol = "eventCount".getBytes();
 	private final List<PutRequest> puts = new ArrayList<PutRequest>();
 	private final List<AtomicIncrementRequest> incs = new ArrayList<AtomicIncrementRequest>();
 	private String[] columnNames = null;
 	private String[] columnKey = null;
 
 	public void initialize(byte[] table, byte[] cf) {
+		LOG.debug("initialize");
+
 		this.table = table;
 		this.columnFamily = cf;
 	}
 
+	public void configure(Context context) {
+		String cols = new String(context.getString("columns"));
+		String key = new String(context.getString("key"));
+
+		this.columnNames = cols.split(",");
+		this.columnKey = key.split(",");
+		LOG.debug("Config columnNames = {}", cols);
+		LOG.debug("Config columnKey = {}", key);
+	}
+
+	public void configure(ComponentConfiguration conf) {
+	}
+
 	public void setEvent(Event event) {
+		LOG.debug("Got event header={}", event.getHeaders().toString());
 		this.currentEvent = event;
 	}
 
 	public List<PutRequest> getActions() {
+		// List<PutRequest> puts = new ArrayList<PutRequest>();
+		puts.clear();
+
 		String eventStr = new String(currentEvent.getBody());
 
-		puts.clear();
-		if (eventStr != null && !eventStr.isEmpty()) {
-			try {
-				CSVParser parser = CSVParser.parse(eventStr, CSVFormat.DEFAULT.withHeader(columnNames));
+		LOG.debug("getActions() ... EventBody: {}", eventStr);
 
-				for (CSVRecord record : parser) {
-					byte[] recordKey = createRecordKey(record);
-					for (Entry<String, String> recordEntry : record.toMap().entrySet()) {
-						PutRequest req = new PutRequest(table, recordKey, columnFamily, recordEntry.getKey().getBytes(),
-								recordEntry.getValue().getBytes());
-						puts.add(req);
-					}
+		CSVParser parser = null;
+		try {
+			parser = CSVParser.parse(eventStr, CSVFormat.DEFAULT.withHeader(columnNames));
+		} catch (IOException e) {
+			LOG.error("ERROR: Cannot create parser for csv string {}", eventStr, e);
+			throw new FlumeException("ERROR: Cannot create parser for csv string ! csv=>>> " + eventStr);
+		}
+		
+		
+		if (parser != null) {
+			for (CSVRecord record : parser) {
 
-					parser.close();
+				String recordKeyString = createRecordKey(record);
+
+				LOG.debug("Create key: {}", recordKeyString);
+				byte[] recordKey = recordKeyString.getBytes();
+
+				for (Entry<String, String> recordEntry : record.toMap().entrySet()) {
+					PutRequest req = new PutRequest(table, recordKey, columnFamily, recordEntry.getKey().getBytes(),
+							recordEntry.getValue().getBytes());
+					puts.add(req);
 				}
+
+			}
+
+			try {
+				parser.close();
 			} catch (IOException e) {
+				LOG.error("ERROR: Cannot create parser for csv string {}", eventStr, e);
 				throw new FlumeException("ERROR: Cannot parse csv string ! csv=>>> " + eventStr);
 			}
+
 		}
+		LOG.debug("Shoud do {} puts", puts.size());
 		return puts;
 	}
 
-	private byte[] createRecordKey(CSVRecord record) {
+	private String createRecordKey(CSVRecord record) {
 		String retVal = "";
 
 		if (columnKey.length == 0)
@@ -78,19 +117,15 @@ public class AsyncHbaseCSVEventSerializer implements AsyncHbaseEventSerializer {
 			for (String col : columnKey) {
 				retVal += record.get(col) + ":";
 			}
-
-			// Remove last ":"
 			retVal = retVal.substring(0, retVal.length() - 1);
 		}
 
-		return retVal.getBytes();
+		return retVal;
 	}
 
 	public List<AtomicIncrementRequest> getIncrements() {
 		incs.clear();
-		// Increment the number of events received
-		// incs.add(new AtomicIncrementRequest(table, "totalEvents".getBytes(),
-		// columnFamily, eventCountCol));
+		incs.add(new AtomicIncrementRequest(table, "totalEvents".getBytes(), columnFamily, eventCountCol));
 		return incs;
 	}
 
@@ -101,14 +136,4 @@ public class AsyncHbaseCSVEventSerializer implements AsyncHbaseEventSerializer {
 		columnNames = null;
 	}
 
-	public void configure(Context context) {
-		String cols = new String(context.getString("columns"));
-		String key = new String(context.getString("key"));
-
-		this.columnNames = cols.split(",");
-		this.columnKey = key.split(",");
-	}
-
-	public void configure(ComponentConfiguration conf) {
-	}
 }

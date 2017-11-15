@@ -57,6 +57,10 @@ so,
 ## Developers
 Me: Yehuda Korotkin <yehuda@alefbt.com> 
 
+## Tested
+
+ * On cloudera 5.10
+
 ## See also
 
  * https://flume.apache.org/FlumeUserGuide.html#asynchbasesink

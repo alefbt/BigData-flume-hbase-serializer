@@ -6,8 +6,6 @@ import org.apache.commons.csv.CSVRecord;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.alefbt.bigdata.flume.sink.hbase.CSVReader;
-
 public class CSVTest {
 
 	@Test

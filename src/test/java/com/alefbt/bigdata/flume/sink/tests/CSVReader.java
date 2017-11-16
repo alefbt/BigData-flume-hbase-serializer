@@ -1,4 +1,4 @@
-package com.alefbt.bigdata.flume.sink.hbase;
+package com.alefbt.bigdata.flume.sink.tests;
 
 import java.io.IOException;
 

@@ -3,6 +3,11 @@ BigData flume AsyncHbaseEventSerializer implemented with CSV reader and RowKey c
 Most of CSV handlers in flume thay split string with comma delimiter "," so the string for ex. `a,b,"c,c2",d` wil not parse correctly. 
 This project uses `Apache common` lib for parsing CSV and handles thouse issues.
 
+There are two (2) Types of serialziers:
+ * `AsyncHbaseCSVEventSerializer`
+ * `HbaseCSVEventSerializer`
+
+
 ## Install
 
     # Build 
@@ -59,7 +64,14 @@ Me: Yehuda Korotkin <yehuda@alefbt.com>
 
 ## Tested
 
- * On cloudera 5.10
+ * On cloudera 5.10 with AsyncHBase mode (was few issues:
+ 
+## Issues
+### On cloudera 5.10 - HBase "too many items queued"
+`org.hbase.async.RemoteException: Call queue is full on /0.0.0.0:60020, too many items queued ?`
+According https://github.com/OpenTSDB/opentsdb/issues/783
+You should increase `hbase.regionserver.handler.count` 
+I found that it solved this issue (but opend other issues)
 
 ## See also
 
